@@ -1,11 +1,10 @@
 # 阿里云openapi的简单实现调用
 
-目前仅实现了少量api
+根据官方文档实现鉴权,目前仅实现了少量api
 
-阿里云AK/SK 读取环境变量获得
-
-ALI_CLOUD_ACCESSKEY_ID
-ALI_CLOUD_ACCESSKEY_SECRET
+阿里云AK/SK 通过读取环境变量获得
+* ALI_CLOUD_ACCESSKEY_ID
+* ALI_CLOUD_ACCESSKEY_SECRET
 
 ## 调用方式
 ```
