@@ -9,6 +9,7 @@ use crate::aliapis::sign::RequestHeader;
 use super::ENDPOINT;
 use super::VERSION;
 
+#[derive(Debug,Clone)]
 pub struct DescribeDomains(OrderMap<String, String>);
 
 impl Api for DescribeDomains {

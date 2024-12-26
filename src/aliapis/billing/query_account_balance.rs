@@ -8,6 +8,7 @@ use super::ENDPOINT;
 use super::VERSION;
 
 ///查询用户账户余额信息
+#[derive(Debug,Clone)]
 pub struct QueryAccountBalance;
 
 impl Api for QueryAccountBalance {

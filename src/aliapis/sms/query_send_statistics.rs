@@ -11,6 +11,7 @@ use super::ENDPOINT;
 use super::VERSION;
 
 ///查询短信发送统计详情，包括短信发送时间、短信发送成功条数、接收回执条数等
+#[derive(Debug,Clone)]
 pub struct QuerySendStatistics(OrderMap<String, String>);
 
 impl QuerySendStatistics {

@@ -9,6 +9,7 @@ use super::VERSION;
 
 
 ///查询用户某个账期内所有商品实例或计费项的消费汇总
+#[derive(Debug,Clone)]
 pub struct DescribeInstanceBill(OrderMap<String, String>);
 
 impl DescribeInstanceBill {

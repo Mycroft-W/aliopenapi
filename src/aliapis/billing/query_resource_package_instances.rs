@@ -7,6 +7,7 @@ use serde::Serialize;
 use super::ENDPOINT;
 use super::VERSION;
 
+#[derive(Debug,Clone)]
 pub struct QueryResourcePackageInstances(OrderMap<String, String>);
 
 impl QueryResourcePackageInstances {

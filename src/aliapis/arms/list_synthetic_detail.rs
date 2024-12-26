@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::aliapis::sign::{Api, RequestHeader};
 
+#[derive(Debug,Clone)]
 pub struct ListSyntheticDetail(OrderMap<String, String>);
 impl ListSyntheticDetail {
     ///地域 ID，当前只支持 cn-hangzhou。
