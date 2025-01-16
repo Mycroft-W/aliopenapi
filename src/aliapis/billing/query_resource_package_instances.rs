@@ -4,10 +4,8 @@ use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
 
-use super::ENDPOINT;
-use super::VERSION;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct QueryResourcePackageInstances(OrderMap<String, String>);
 
 impl QueryResourcePackageInstances {
@@ -59,13 +57,15 @@ impl Api for QueryResourcePackageInstances {
         "QueryResourcePackageInstances".to_string()
     }
 
-    fn canonical_request(self) -> crate::aliapis::sign::RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .sign()
+        .send()
     }
 }
 
@@ -130,7 +130,7 @@ mod tests {
     #[tokio::test]
     async fn works() -> anyhow::Result<()> {
         let test_api = QueryResourcePackageInstances::new();
-        let response = test_api.canonical_request().sign().send().await?;
+        let response = test_api.send().await?;
 
         assert_eq!(response.status(), 200);
         Ok(())

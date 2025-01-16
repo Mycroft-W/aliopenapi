@@ -4,12 +4,8 @@ use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
 
-use super::ENDPOINT;
-use super::VERSION;
-
-
 ///查询用户某个账期内所有商品实例或计费项的消费汇总
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct DescribeInstanceBill(OrderMap<String, String>);
 
 impl DescribeInstanceBill {
@@ -111,13 +107,15 @@ impl Api for DescribeInstanceBill {
         "DescribeInstanceBill".to_string()
     }
 
-    fn canonical_request(self) -> crate::aliapis::sign::RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .sign()
+        .send()
     }
 }
 
@@ -206,7 +204,7 @@ mod tests {
     async fn works() -> anyhow::Result<()> {
         let billing_cycle = chrono::Local::now().format("%Y-%m").to_string();
         let test_api = DescribeInstanceBill::new().set_billing_cycle(&billing_cycle);
-        let response = test_api.canonical_request().sign().send().await?;
+        let response = test_api.send().await?;
 
         assert_eq!(response.status(), 200);
         Ok(())

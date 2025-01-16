@@ -7,11 +7,8 @@ use serde::Serialize;
 use crate::aliapis::sign::Api;
 use crate::aliapis::sign::RequestHeader;
 
-use super::ENDPOINT;
-use super::VERSION;
-
 ///查询短信发送统计详情，包括短信发送时间、短信发送成功条数、接收回执条数等
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct QuerySendStatistics(OrderMap<String, String>);
 
 impl QuerySendStatistics {
@@ -73,13 +70,16 @@ impl Api for QuerySendStatistics {
         "QuerySendStatistics".into()
     }
 
-    fn canonical_request(self) -> RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .set_method("POST")
+        .sign()
+        .send()
     }
 }
 
@@ -119,12 +119,7 @@ mod tests {
             .set_start_date(&date)
             .set_end_date(&date)
             .set_is_globe("1");
-        let response = test_api
-            .canonical_request()
-            .set_method("POST")
-            .sign()
-            .send()
-            .await?;
+        let response = test_api.send().await?;
         assert_eq!(response.status(), 200);
 
         Ok(())

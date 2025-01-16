@@ -1,14 +1,11 @@
+use crate::aliapis::sign::Api;
+use crate::aliapis::sign::RequestHeader;
 use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
-use crate::aliapis::sign::Api;
-use crate::aliapis::sign::RequestHeader;
-
-use super::ENDPOINT;
-use super::VERSION;
 
 ///查询用户账户余额信息
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct QueryAccountBalance;
 
 impl Api for QueryAccountBalance {
@@ -20,15 +17,16 @@ impl Api for QueryAccountBalance {
         "QueryAccountBalance".to_string()
     }
 
-    fn canonical_request(self) -> RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         let params: OrderMap<String, String> = OrderMap::new();
-
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             params,
         )
+        .sign()
+        .send()
     }
 }
 
@@ -61,7 +59,7 @@ mod tests {
     #[tokio::test]
     async fn works() -> anyhow::Result<()> {
         let test_api = QueryAccountBalance::new();
-        let response = test_api.canonical_request().sign().send().await?;
+        let response = test_api.send().await?;
 
         assert_eq!(response.status(), 200);
         Ok(())

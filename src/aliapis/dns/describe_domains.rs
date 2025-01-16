@@ -6,10 +6,7 @@ use serde_json::Value;
 use crate::aliapis::sign::Api;
 use crate::aliapis::sign::RequestHeader;
 
-use super::ENDPOINT;
-use super::VERSION;
-
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct DescribeDomains(OrderMap<String, String>);
 
 impl Api for DescribeDomains {
@@ -23,13 +20,16 @@ impl Api for DescribeDomains {
         "DescribeDomains".to_string()
     }
 
-    fn canonical_request(self) -> RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .set_method("POST")
+        .sign()
+        .send()
     }
 }
 
@@ -82,20 +82,12 @@ pub struct Tags {
 
 #[cfg(test)]
 mod tests {
-    use crate::aliapis::{
-        dns::describe_domains::DescribeDomains,
-        sign::Api,
-    };
+    use crate::aliapis::{dns::describe_domains::DescribeDomains, sign::Api};
 
     #[tokio::test]
     async fn works() -> anyhow::Result<()> {
         let test_api = DescribeDomains::new();
-        let response = test_api
-            .canonical_request()
-            .set_method("POST")
-            .sign()
-            .send()
-            .await?;
+        let response = test_api.send().await?;
         assert_eq!(response.status(), 403);
 
         Ok(())

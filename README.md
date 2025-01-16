@@ -1,6 +1,6 @@
 # 阿里云openapi的简单实现调用
 
-根据官方文档实现鉴权,目前仅实现了少量api
+根据官方文档（[V3版本](https://help.aliyun.com/zh/sdk/product-overview/v3-request-structure-and-signature?spm=a2c4g.11186623.0.0.4bd02addteCnVx)）实现签名,目前仅实现了少量api
 
 阿里云AK/SK 通过读取环境变量获得
 * ALI_CLOUD_ACCESSKEY_ID

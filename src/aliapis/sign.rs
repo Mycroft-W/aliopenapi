@@ -17,7 +17,7 @@ pub struct RequestHeader {
     pub host: String,
     pub headers: OrderMap<String, String>,
     pub query_param: OrderMap<String, String>,
-    pub body: Option<String>,
+    pub body: String,
 }
 
 impl Default for RequestHeader {
@@ -61,9 +61,29 @@ impl RequestHeader {
             host,
             headers,
             query_param,
-            body: None,
             ..Default::default()
         }
+    }
+    ///设置请求方法
+    pub fn set_method(mut self, method: &str) -> Self {
+        self.http_method = method.to_uppercase();
+        self
+    }
+    ///设置请求路径
+    pub fn set_uri(mut self, uri: &str) -> Self {
+        self.canonical_uri = uri.to_string();
+        self
+    }
+    ///设置body
+    pub fn set_body(mut self, body: serde_json::Value) -> Self {
+        self.body = body.to_string();
+        self
+    }
+    /// 设置 accept_encoding
+    pub fn set_accept_encoding(mut self, accept_encoding: impl Into<String>) -> Self {
+        self.headers
+            .insert_sorted("Accept-Encoding".to_owned(), accept_encoding.into());
+        self
     }
     ///使用AK/SK 签名请求
     pub fn sign(mut self) -> Self {
@@ -91,10 +111,7 @@ impl RequestHeader {
             .replace("%2E", ".")
             .replace("%7E", "~");
 
-        let mut request_body = String::new();
-        if let Some(body) = &self.body {
-            request_body = body.to_string();
-        }
+        let request_body = self.body.to_string();
 
         // get the hex encoding from the sha256 digest of payload
         let hashed_request_payload = HEXLOWER
@@ -134,7 +151,7 @@ impl RequestHeader {
         .to_string();
 
         #[cfg(debug_assertions)]
-        debug!("{:?}", canonical_request);
+        println!("{:?}", canonical_request);
 
         // first sha256 digest, then hex encoding
         let hashed_canoical_request = HEXLOWER
@@ -159,11 +176,7 @@ impl RequestHeader {
             });
         self
     }
-    /// 设置request请求，默认为GET
-    pub fn set_method(mut self, method: impl Into<String>) -> Self {
-        self.http_method = method.into().to_uppercase();
-        self
-    }
+
     /// 发送请求到aliyun endpoint
     pub fn send(self) -> impl Future<Output = Result<Response, Error>> {
         let client = reqwest::Client::new();
@@ -184,11 +197,16 @@ impl RequestHeader {
 
         let method = Method::from_bytes(self.http_method.as_bytes()).unwrap();
 
-        client
+        let client = client
             .request(method, url)
             .headers(hashmap)
             .query(&query_list)
-            .send()
+            .body(self.body.to_string());
+
+        #[cfg(debug_assertions)]
+        println!("{:#?}", client);
+
+        client.send()
     }
 }
 
@@ -201,6 +219,5 @@ fn get_str_at_location(pointer: usize, length: usize) -> &'static str {
 pub trait Api {
     fn new() -> Self;
     fn name(&self) -> String;
-    /// 规范化请求参数
-    fn canonical_request(self) -> RequestHeader;
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>>;
 }

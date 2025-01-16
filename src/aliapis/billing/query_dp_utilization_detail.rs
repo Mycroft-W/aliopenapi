@@ -4,10 +4,7 @@ use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
 
-use super::ENDPOINT;
-use super::VERSION;
-
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct QueryDPUtilizationDetail(OrderMap<String, String>);
 
 impl QueryDPUtilizationDetail {
@@ -82,13 +79,15 @@ impl Api for QueryDPUtilizationDetail {
         "QueryDPUtilizationDetail".to_string()
     }
 
-    fn canonical_request(self) -> crate::aliapis::sign::RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .sign()
+        .send()
     }
 }
 
@@ -152,7 +151,7 @@ mod tests {
             .set_include_share("true")
             .set_start_time(&start_time)
             .set_end_time(&end_time);
-        let response = test_api.canonical_request().sign().send().await?;
+        let response = test_api.send().await?;
 
         assert_eq!(response.status(), 200);
         Ok(())

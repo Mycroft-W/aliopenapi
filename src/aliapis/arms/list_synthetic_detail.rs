@@ -1,10 +1,9 @@
-use super::{ENDPOINT, VERSION};
 use ordermap::OrderMap;
 use serde::{Deserialize, Serialize};
 
 use crate::aliapis::sign::{Api, RequestHeader};
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct ListSyntheticDetail(OrderMap<String, String>);
 impl ListSyntheticDetail {
     ///地域 ID，当前只支持 cn-hangzhou。
@@ -111,13 +110,15 @@ impl Api for ListSyntheticDetail {
         "ListSyntheticDetail".into()
     }
 
-    fn canonical_request(self) -> RequestHeader {
+    fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
         RequestHeader::new(
-            ENDPOINT.to_string(),
+            super::ENDPOINT.to_string(),
             self.name(),
-            VERSION.to_string(),
+            super::VERSION.to_string(),
             self.0,
         )
+        .sign()
+        .send()
     }
 }
 
@@ -183,7 +184,8 @@ pub struct Item {
     pub ip_region: String,
     #[serde(rename = "taskName")]
     pub task_name: String,
-    #[serde(rename = "timestamp")]
+    #[serde(rename = "timesta
+    fn canonical_request(self) -> RequestHeader;mp")]
     pub timestamp: String,
 }
 
@@ -203,7 +205,7 @@ mod tests {
             .set_detail("DOWNLOAD_LIST")
             .set_page("1")
             .set_filters("f124d885bcbc4d78a7fcb3a020b6ad66");
-        let response = test_api.canonical_request().sign().send().await?;
+        let response = test_api.send().await?;
 
         assert_eq!(response.status(), 200);
         Ok(())
