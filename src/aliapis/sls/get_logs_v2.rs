@@ -273,11 +273,11 @@ mod tests {
             .set_logstore("123pan-gateway")
             .set_from(date - 3600)
             .set_to(date);
-        println!("{:#?}", test_api);
+        //debug!("{:#?}", test_api);
         let response = test_api.send().await?;
-        println!("{:#?}", response.text().await?);
-        //assert_eq!(response.status(), 200);
+        //debug!("{:#?}", response.text().await?);
+        assert_eq!(response.status(), 200);
 
-        Ok(()) 
+        Ok(())
     }
 }

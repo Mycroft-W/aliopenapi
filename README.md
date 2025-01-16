@@ -15,6 +15,6 @@ let api = QuerySendStatistics::new()
             .set_end_date(&date)
             .set_is_globe("1");
 
-// canonical_request() 规范化请求头，sign() 使用AK/SK签名
-let response = api.canonical_request().sign().send().await?;
+// send() 会先调用 canonical_request() 规范化请求头，然后调用 sign() 使用AK/SK签名
+let response = api.send().await?;
 ```

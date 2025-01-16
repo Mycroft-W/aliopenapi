@@ -9,64 +9,70 @@ use crate::RequestHeader;
 pub struct DescribeDomainRecords(OrderMap<String, String>);
 
 impl DescribeDomainRecords {
-    pub fn set_lang(mut self, lang: &str) -> Self{
+    pub fn set_lang(mut self, lang: &str) -> Self {
         self.0.insert_sorted("Lang".into(), lang.into());
         self
     }
-    pub fn set_domain_name(mut self, domain_name: &str) -> Self{
-        self.0.insert_sorted("DomainName".into(), domain_name.into());
+    pub fn set_domain_name(mut self, domain_name: &str) -> Self {
+        self.0
+            .insert_sorted("DomainName".into(), domain_name.into());
         self
     }
-    pub fn set_key_word(mut self, key_word: &str) -> Self{
+    pub fn set_key_word(mut self, key_word: &str) -> Self {
         self.0.insert_sorted("KeyWord".into(), key_word.into());
         self
     }
-    pub fn set_rr_key_word(mut self, rr_key_word: &str) -> Self{
+    pub fn set_rr_key_word(mut self, rr_key_word: &str) -> Self {
         self.0.insert_sorted("RRKeyWord".into(), rr_key_word.into());
         self
     }
-    pub fn set_type_key_word(mut self, type_key_word: &str) -> Self{
-        self.0.insert_sorted("TypeKeyWord".into(), type_key_word.into());
+    pub fn set_type_key_word(mut self, type_key_word: &str) -> Self {
+        self.0
+            .insert_sorted("TypeKeyWord".into(), type_key_word.into());
         self
     }
-    pub fn set_value_key_word(mut self, value_key_word: &str) -> Self{
-        self.0.insert_sorted("ValueKeyWord".into(), value_key_word.into());
+    pub fn set_value_key_word(mut self, value_key_word: &str) -> Self {
+        self.0
+            .insert_sorted("ValueKeyWord".into(), value_key_word.into());
         self
     }
-    pub fn set_order_by(mut self, order_by: &str) -> Self{
+    pub fn set_order_by(mut self, order_by: &str) -> Self {
         self.0.insert_sorted("OrderBy".into(), order_by.into());
         self
     }
-    pub fn set_direction(mut self, direction: &str) -> Self{
+    pub fn set_direction(mut self, direction: &str) -> Self {
         self.0.insert_sorted("Direction".into(), direction.into());
         self
     }
-    pub fn set_search_mode(mut self, search_mode: &str) -> Self{
-        self.0.insert_sorted("SearchMode".into(), search_mode.into());
+    pub fn set_search_mode(mut self, search_mode: &str) -> Self {
+        self.0
+            .insert_sorted("SearchMode".into(), search_mode.into());
         self
     }
-    pub fn set_group_id(mut self, group_id: &str) -> Self{
+    pub fn set_group_id(mut self, group_id: &str) -> Self {
         self.0.insert_sorted("GroupId".into(), group_id.into());
         self
     }
-    pub fn set_record_type(mut self, type_: &str) -> Self{
+    pub fn set_record_type(mut self, type_: &str) -> Self {
         self.0.insert_sorted("Type".into(), type_.into());
         self
     }
-    pub fn set_line(mut self, line: &str) -> Self{
+    pub fn set_line(mut self, line: &str) -> Self {
         self.0.insert_sorted("Line".into(), line.into());
         self
     }
-    pub fn set_status(mut self, status: &str) -> Self{
+    pub fn set_status(mut self, status: &str) -> Self {
         self.0.insert_sorted("Status".into(), status.into());
         self
     }
-    pub fn set_page_number(mut self, page_number: i64) -> Self{
-        self.0.insert_sorted("PageNumber".into(), page_number.to_string());
+    pub fn set_page_number(mut self, page_number: i64) -> Self {
+        self.0
+            .insert_sorted("PageNumber".into(), page_number.to_string());
         self
     }
-    pub fn set_page_size(mut self, page_size: i64) -> Self{
-        self.0.insert_sorted("PageSize".into(), page_size.to_string());
+    pub fn set_page_size(mut self, page_size: i64) -> Self {
+        self.0
+            .insert_sorted("PageSize".into(), page_size.to_string());
         self
     }
 }
@@ -131,7 +137,6 @@ pub struct Record {
     pub update_timestamp: Option<i64>,
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::aliapis::{dns::describe_domain_records::DescribeDomainRecords, sign::Api};
@@ -140,8 +145,7 @@ mod tests {
     async fn works() -> anyhow::Result<()> {
         let test_api = DescribeDomainRecords::new().set_domain_name("123pan.cn");
         let response = test_api.send().await?;
-        println!("{:?}", response.text().await?);
-        //assert_eq!(response.status(), 403);
+        assert_eq!(response.status(), 200);
 
         Ok(())
     }

@@ -151,7 +151,7 @@ impl RequestHeader {
         .to_string();
 
         #[cfg(debug_assertions)]
-        println!("{:?}", canonical_request);
+        debug!("{:?}", canonical_request);
 
         // first sha256 digest, then hex encoding
         let hashed_canoical_request = HEXLOWER
@@ -204,7 +204,7 @@ impl RequestHeader {
             .body(self.body.to_string());
 
         #[cfg(debug_assertions)]
-        println!("{:#?}", client);
+        debug!("{:#?}", client);
 
         client.send()
     }
