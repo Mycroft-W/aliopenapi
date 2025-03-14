@@ -73,7 +73,6 @@ impl Api for AddDomainRecord {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct AddDomainRecordResponse {
-    pub status: String,
     pub request_id: String,
     pub record_id: String,
 }
