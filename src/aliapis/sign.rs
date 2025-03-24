@@ -216,6 +216,7 @@ fn get_str_at_location(pointer: usize, length: usize) -> &'static str {
     unsafe { from_utf8_unchecked(from_raw_parts(pointer as *const u8, length)) }
 }
 
+
 pub trait Api {
     fn new() -> Self;
     fn name(&self) -> String;

@@ -1,16 +1,19 @@
-use crate::aliapis::sign::Api;
+use crate::sign::Api;
 use crate::aliapis::sign::RequestHeader;
 use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
+use api_derive::Api;
 
 ///查询用户账户余额信息
-#[derive(Debug, Clone)]
-pub struct QueryAccountBalance;
+#[derive(Debug, Clone, Api)]
+pub struct QueryAccountBalance(OrderMap<String, String>);
 
+/* 
 impl Api for QueryAccountBalance {
     fn new() -> Self {
-        QueryAccountBalance
+        let parameters = OrderMap::new();
+        QueryAccountBalance(parameters)
     }
 
     fn name(&self) -> String {
@@ -18,17 +21,17 @@ impl Api for QueryAccountBalance {
     }
 
     fn send(self) -> impl std::future::Future<Output = Result<reqwest::Response, reqwest::Error>> {
-        let params: OrderMap<String, String> = OrderMap::new();
         RequestHeader::new(
             super::ENDPOINT.to_string(),
             self.name(),
             super::VERSION.to_string(),
-            params,
+            self.0,
         )
         .sign()
         .send()
     }
 }
+*/
 
 // Response Struct
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -54,7 +57,7 @@ pub struct Data {
 
 #[cfg(test)]
 mod tests {
-    use crate::aliapis::{billing::query_account_balance::QueryAccountBalance, sign::Api};
+    use crate::{aliapis::billing::query_account_balance::QueryAccountBalance, Api};
 
     #[tokio::test]
     async fn works() -> anyhow::Result<()> {

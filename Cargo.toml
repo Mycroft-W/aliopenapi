@@ -3,6 +3,9 @@ name = "libaliopenapi"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [ "crates/api_derive" ]
+
 [dependencies]
 anyhow = "1.0.94"
 chrono = "0.4.39"
@@ -18,3 +21,4 @@ tracing = { version = "0.1.41"}
 tracing-subscriber = { version = "0.3.19", features = ["chrono"] }
 urlencoding = "2.1.3"
 uuid = { version = "1.11.0", features = ["v4"] }
+api_derive = { path = "crates/api_derive" }

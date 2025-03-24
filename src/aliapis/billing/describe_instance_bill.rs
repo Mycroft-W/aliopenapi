@@ -1,12 +1,14 @@
-use crate::aliapis::sign::Api;
-use crate::aliapis::sign::RequestHeader;
+use crate::sign::Api;
+use crate::sign::RequestHeader;
+use api_derive::Api;
 use ordermap::OrderMap;
 use serde::Deserialize;
 use serde::Serialize;
 
 ///查询用户某个账期内所有商品实例或计费项的消费汇总
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Api)]
 pub struct DescribeInstanceBill(OrderMap<String, String>);
+
 
 impl DescribeInstanceBill {
     /// 必选，账期 YYYY－MM。仅支持最近 18 个月账期。实例：2024-11
@@ -94,7 +96,7 @@ impl DescribeInstanceBill {
         self
     }
 }
-
+/* 
 impl Api for DescribeInstanceBill {
     fn new() -> Self {
         let mut parameters: OrderMap<String, String> = OrderMap::new();
@@ -118,6 +120,7 @@ impl Api for DescribeInstanceBill {
         .send()
     }
 }
+*/
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
@@ -198,7 +201,7 @@ pub struct Item {
 
 #[cfg(test)]
 mod tests {
-    use crate::aliapis::{billing::describe_instance_bill::DescribeInstanceBill, sign::Api};
+    use crate::{aliapis::billing::describe_instance_bill::DescribeInstanceBill, Api};
 
     #[tokio::test]
     async fn works() -> anyhow::Result<()> {
