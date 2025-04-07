@@ -8,6 +8,9 @@ pub fn api_derive(input: TokenStream) -> TokenStream {
     let struct_identifier = input.ident;
 
     let expanded = quote::quote! {
+        use crate::sign::Api;
+        use crate::sign::RequestHeader;
+        
         impl Api for #struct_identifier {
             fn new() -> Self {
                 let parameters = OrderMap::new();

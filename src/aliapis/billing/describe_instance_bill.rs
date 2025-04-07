@@ -1,5 +1,3 @@
-use crate::sign::Api;
-use crate::sign::RequestHeader;
 use api_derive::Api;
 use ordermap::OrderMap;
 use serde::Deserialize;
